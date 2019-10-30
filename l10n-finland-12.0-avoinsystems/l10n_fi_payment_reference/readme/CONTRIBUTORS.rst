@@ -1,3 +1,0 @@
-- Miku Laitinen (Avoin.Systems)
-- Mikko Närjänen (Avoin.Systems)
-- Oskars Zālītis (Avoin.Systems)
