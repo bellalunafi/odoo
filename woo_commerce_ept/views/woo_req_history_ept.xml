@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<odoo>
+  <data>	   	
+
+	<record id="woo_req_history_tree_view_ept" model="ir.ui.view">
+	    <field name="name">Woo Debug log</field>
+	    <field name="model">woo.req.history.ept</field>
+		<field name="arch" type="xml">
+            <tree create="false">
+				<field name="woo_instance_id"/>
+				<field name="type"/>
+				<field name="create_date"/>
+				<field name="req_time"></field>
+				<field name="res_time"></field>
+			</tree>
+		</field>
+	</record>
+
+	<record id="woo_req_history_form_view_ept" model="ir.ui.view">
+		<field name="name">Woo Debug Log</field>
+		<field name="model">woo.req.history.ept</field>
+		<field name="arch" type="xml">
+			<form>
+				<sheet>
+					<group>
+						<field name="woo_instance_id"/>
+						<field name="url"/>
+						<field name="type" readonly="1" options="{'no_open': True}"/>
+						<field name="req_time"></field>
+						<field name="res_time"></field>
+					</group>
+					<group string="Request">
+						<field name="req" nolabel="1"/>
+					</group>
+					<group string="Response">
+						<field name="res" nolabel="1"/>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>	
+	
+	<record id="woo_req_history_search_view_ept" model="ir.ui.view">
+            <field name="name">Woo Transaction Search View</field>
+            <field name="model">woo.req.history.ept</field>
+			<field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Woo Instance">
+                	<field name="woo_instance_id"/>
+                	<group expand="0" string="Group By...">
+						 <filter name="instance" string="Instance" icon="terp-personal"  context="{'group_by':'woo_instance_id'}"/>
+						 <filter name="type" string="Type" icon="terp-personal"  context="{'group_by':'type'}"/>
+					</group>  					
+				</search>
+			</field>
+	</record>
+
+	<record id="action_woo_req_history_ept" model="ir.actions.act_window">
+		<field name="name">WooCommerce Debug Details</field>
+		<field name="res_model">woo.req.history.ept</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+		<field name="view_id" ref="woo_req_history_tree_view_ept"/>
+        <field name="help" type="html">
+             <div>
+                 <br/><br/><br/>
+                 <p>
+                   <b>No WooCommerce Debug Details available right now.</b>
+                 </p>                 
+             </div>
+		</field>        
+	</record>
+	
+    <menuitem id="menu_woo_req_history_ept" name="Debug Details"
+      parent="woo_commerce_ept.woo_job_log_ept" 
+      action="action_woo_req_history_ept" sequence="29" groups="woo_commerce_ept.group_woo_debug_ept"/>
+
+  </data>
+</odoo>

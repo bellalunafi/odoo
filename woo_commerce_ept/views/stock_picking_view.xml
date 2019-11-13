@@ -1,0 +1,223 @@
+<?xml version="1.0" ?>
+<odoo>
+  <data>	
+        <record id="view_picking_form_ept" model="ir.ui.view">
+            <field name="name">stock.picking.form</field>
+            <field name="model">stock.picking</field>
+			<field name="inherit_id" ref="stock.view_picking_form"/>
+            <field eval="12" name="priority"/>
+            <field name="arch" type="xml">
+                <button name="action_cancel" position="after">
+				   <button name="cancel_in_woo" string="Cancel In WooCommerce" type="object" attrs="{'invisible':['|','|','|',('state','!=','cancel'),('canceled_in_woo','=',True),('picking_type_code','!=','outgoing'),('woo_instance_id','=',False)]}" class="oe_highlight"/>
+                </button>            
+                <field name="priority" position="after">
+	 				<field name="canceled_in_woo" readonly="1"/>
+	 				<field name="woo_instance_id" invisible="1"/>
+                </field>		
+<!--             	<field name="pack_operation_ids" position="replace"> -->
+<!--                     <field name="pack_operation_ids" context="{'default_picking_id': active_id, 'default_location_id': location_id, 'default_location_dest_id': location_dest_id}"> -->
+<!--                         <tree editable="top"> -->
+<!--                             <field name="package_id" groups="stock.group_tracking_lot" readonly="1"/> -->
+<!--                             <field name="product_id" on_change="product_id_change(product_id, product_uom_id, product_qty)" readonly="1"/> -->
+<!--                             <field name="product_uom_id" groups="product.group_uom" readonly="1"/> -->
+<!--                             <field name="lot_id" domain="[('product_id','=', product_id)]" context="{'product_id': product_id}" groups="stock.group_production_lot" readonly="1"/> -->
+<!--                             <field name="picking_id" invisible="1"/> -->
+<!--                             <field name="owner_id" groups="stock.group_tracking_owner" readonly="1"/> -->
+<!--                             <field name="product_qty" attrs="{'required': [('product_id', '!=', False)]}" readonly="1"/> -->
+<!--                             <field name="location_id" domain="[('id', 'child_of', parent.location_id)]" readonly="1"/> -->
+<!--                             <field name="location_dest_id" domain="[('id', 'child_of', parent.location_dest_id)]" readonly="1"/> -->
+<!--                             <field name="result_package_id" groups="stock.group_tracking_lot" context="{'location_id': location_dest_id}"  attrs="{'readonly': [ ('product_id','=',False)]}"/> -->
+<!--                         </tree> -->
+<!--                     </field>            	 -->
+<!--             	</field> -->
+			</field>
+		</record>
+
+        <record id="vpicktree_ept" model="ir.ui.view">
+            <field name="name">stock.picking.tree</field>
+            <field name="model">stock.picking</field>
+            <field name="priority">100</field>
+            <field name="arch" type="xml">
+                <tree colors="blue:state == 'draft';grey:state == 'cancel';red:state not in ('cancel', 'done') and min_date &lt; current_date" string="Picking list" create="false">
+            		<field name="updated_in_woo" invisible="1"/>
+            		<field name="picking_type_code" invisible="1"/>
+            		<button name="mark_not_sent_woo" type="object" help="Click Here To Set Picking Updated Into woo" icon="fa-level-up text-default" attrs="{'invisible':['|',('updated_in_woo','=',True),('picking_type_code','!=','outgoing')]}" aria-label="Mark Not Sent Woo" title="Mark Not Sent Woo"/>
+            		<button name="mark_sent_woo" type="object" help="Click Here To Set Picking Not Updated Into woo" icon="fa-lock text-success" attrs="{'invisible':['|',('updated_in_woo','=',False),('picking_type_code','!=','outgoing')]}" aria-label="Mark Sent Woo" title="Mark Sent Woo"/>
+                    <field name="name"/>
+                    <field name="location_dest_id"/>
+                    <field name="partner_id"/>
+                    <field name="date"/>
+<!--                     <field name="min_date" invisible="1"/> -->
+                    <field name="origin"/>
+                    <field name="group_id" invisible="1"/>
+                    <field name="backorder_id"/>
+                    <field name="state"/>
+                    <field name="priority" invisible="1"/>
+                    <field name="picking_type_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="action_picking_view_ept" model="ir.actions.act_window">
+            <field name="name">Delivery Orders</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('is_woo_delivery_order','=','True')]</field>
+            <field name="search_view_id" ref="stock.view_picking_internal_search"/>
+            <field name="view_id" ref="vpicktree_ept"/>
+	        <field name="help" type="html">
+              <div class="oe_empty_woo_delivery_order">
+                  <br/><br/><br/>
+                  <p>
+                    There is no any Delivery Order created for any of WooCommerce Sale Orders. 
+                    If your WooCommerce Instance's Invoice Policy is set to "Before Delivery", then after Invoice being totally paid, Delivery order for WooCommerce will be created automatically and it will be visible over here.
+                    From here, you can't manually create delivery order for WooCommerce. It must be created via Sale Order.
+                  </p>
+                 
+              </div>
+			</field>            
+        </record>
+        <record id="action_woo_picking_instance_ept" model="ir.actions.act_window">
+            <field name="name">Delivery Orders</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('woo_instance_id','=',active_id)]</field>
+            <field name="search_view_id" ref="stock.view_picking_internal_search"/>
+            <field name="view_id" ref="vpicktree_ept"/>
+        </record>        
+        <record id="action_picking_view_confirm_ept" model="ir.actions.act_window">
+            <field name="name">Delivery Orders</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('is_woo_delivery_order','=','True'),('woo_instance_id','=',active_id),('state','=','confirmed')]</field>
+            <field name="search_view_id" ref="stock.view_picking_internal_search"/>
+            <field name="view_id" ref="vpicktree_ept"/>
+        </record>
+        <record id="action_picking_view_partially_available_ept" model="ir.actions.act_window">
+            <field name="name">Delivery Orders</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('is_woo_delivery_order','=','True'),('woo_instance_id','=',active_id),('state','=','partially_available')]</field>
+            <field name="search_view_id" ref="stock.view_picking_internal_search"/>
+            <field name="view_id" ref="vpicktree_ept"/>
+        </record>
+        <record id="action_picking_view_assigned_ept" model="ir.actions.act_window">
+            <field name="name">Delivery Orders</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('is_woo_delivery_order','=','True'),('woo_instance_id','=',active_id),('state','=','assigned')]</field>
+            <field name="search_view_id" ref="stock.view_picking_internal_search"/>
+            <field name="view_id" ref="vpicktree_ept"/>
+        </record>
+        <record id="action_picking_view_done_ept" model="ir.actions.act_window">
+            <field name="name">Delivery Orders</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('is_woo_delivery_order','=','True'),('woo_instance_id','=',active_id),('state','=','done')]</field>
+            <field name="search_view_id" ref="stock.view_picking_internal_search"/>
+            <field name="view_id" ref="vpicktree_ept"/>
+        </record>
+
+        <record id="action_picking_view_cancel_ept" model="ir.actions.act_window">
+            <field name="name">Delivery Orders</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('is_woo_delivery_order','=','True'),('state','=','cancel')]</field>
+            <field name="search_view_id" ref="stock.view_picking_internal_search"/>
+            <field name="view_id" ref="vpicktree_ept"/>
+        </record>
+        <record id="view_delivery_carrier_form_ept" model="ir.ui.view">
+            <field name="name">delivery.carrier.form.add.code</field>
+            <field name="model">delivery.carrier</field>
+            <field name="inherit_id" ref="delivery.view_delivery_carrier_form" />
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+				<field name="fixed_price" position="after">
+					<field name="woo_code"/>
+				</field>
+			</field>
+		</record>
+
+        <record id="action_picking_tree_late_ept" model="ir.actions.act_window">
+            <field name="name">Late Transfers</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar</field>
+            <field name="domain">[('woo_instance_id','!=',False)]</field>
+            <field name="context">{
+                    'search_default_picking_type_id': [active_id],
+                    'default_picking_type_id': active_id,
+                    'contact_display': 'partner_address',
+                    'search_default_late': 1,
+                    'search_default_confirmed': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="stock.view_picking_internal_search"/>
+        </record>
+        <record id="action_picking_tree_backorder_ept" model="ir.actions.act_window">
+            <field name="name">Back Orders</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar</field>
+            <field name="domain">[('woo_instance_id','!=',False)]</field>
+            <field name="context">{
+                    'search_default_picking_type_id': [active_id],
+                    'default_picking_type_id': active_id,
+                    'contact_display': 'partner_address',
+                    'search_default_backorder': 1,
+                    'search_default_confirmed': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="stock.view_picking_internal_search"/>
+        </record>
+        <record id="action_picking_view_to_be_canceled" model="ir.actions.act_window">
+            <field name="name">To be Cancel at WooCommerce</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('is_woo_delivery_order','=','True'),('state','=','cancel'),('canceled_in_woo','=',False)]</field>
+            <field name="search_view_id" ref="stock.view_picking_internal_search"/>
+            <field name="view_id" ref="vpicktree_ept"/>
+        </record>
+        <record id="action_picking_view_canceled_in_shipify" model="ir.actions.act_window">
+            <field name="name">Canceled In WooCommerce</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('is_woo_delivery_order','=','True'),('state','=','cancel'),('canceled_in_woo','=',True)]</field>
+            <field name="search_view_id" ref="stock.view_picking_internal_search"/>
+            <field name="view_id" ref="vpicktree_ept"/>
+        </record>
+
+      <menuitem id="woo_instance_menu_item_transfer_details" name="Transfer Details"
+      parent="woo_commerce_ept.woo_commerce_main_menu" sequence="15"/>
+
+     <menuitem id="menu_item_woo_delivery_order_ept" name="Delivery Order"
+      parent="woo_instance_menu_item_transfer_details" action="action_picking_view_ept" sequence="5"/>
+
+     <menuitem id="menu_item_woo_to_be_canceled"
+      parent="woo_instance_menu_item_transfer_details" action="action_picking_view_to_be_canceled" sequence="5"/>
+     <menuitem id="menu_item_woo_canceled_ept" 
+      parent="woo_instance_menu_item_transfer_details" action="action_picking_view_canceled_in_shipify" sequence="5"/>
+
+  </data>
+</odoo>

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+        <record id="view_order_tree_woo_ept" model="ir.ui.view">
+            <field name="name">sale.order.tree</field>
+            <field name="model">sale.order</field>
+            <field name="priority">100</field>
+            <field name="arch" type="xml">
+		            <tree string="WooCommerce Sale Order Tree View" colors="grey:state=='cancel';green:updated_in_woo==True;blue:state in ('waiting_date','manual');red:state in ('invoice_except','shipping_except')" create="false">            
+
+					<field name="updated_in_woo" invisible="1"/>
+					<button name="mark_sent_woo" help="Not Updated In WooCommerce" icon="fa-level-up text-default" attrs="{'invisible':[('updated_in_woo','=',True)]}" aria-label="Mark Sent Woo" title="Mark Sent Woo"/>
+					<button name="mark_not_sent_woo" help="Updated In WooCommerce" icon="fa-lock text-success" attrs="{'invisible':[('updated_in_woo','=',False)]}" aria-label="Mark Not Sent Woo" title="Mark Not Sent Woo"/>
+                    <field name="message_unread" invisible="1"/>
+                    <field name="name" string="Order Number"/>
+                    <field name="date_order"/>
+                    <field name="partner_id"/>
+                    <field name="user_id"/>
+                    <field name="amount_total" sum="Total Tax Included"/>
+                    <field name="state"/>                    
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_order_form" model="ir.ui.view">
+                <field name="name">sale.order.form.inherit</field>
+                <field name="model">sale.order</field>
+                <field name="type">form</field>
+                <field name="inherit_id" ref="sale.view_order_form"/>
+                <field name="arch" type="xml">
+                    <data>
+					 <notebook position="inside">
+					 	<page string="WooCommerce Info" attrs="{'invisible':[('woo_instance_id','=',False)]}">
+					 		<group>
+					 			<group>
+				                 	<field name="woo_order_id" readonly="True"/>
+					 			 	<field name="woo_order_number" readonly="True"/>
+									<field name="woo_instance_id" domain="[('state','=','confirmed')]" readonly="True"/>
+					 			</group>
+					 			<group>
+					 				<field name="payment_gateway_id" readonly="True"/>
+					 				<field name="visible_trans_id" invisible="1"/>
+				 					<field name="woo_trans_id" attrs="{'invisible':[('visible_trans_id','=',False)]}" readonly="True"/>
+				 					<field name="woo_customer_ip" readonly="True"/>
+					 			</group>
+					 		</group>							
+					 	</page>
+					 </notebook>
+                    </data>
+               </field>
+        </record>
+
+		<record id="action_woo_sale_quotation" model="ir.actions.act_window">
+			<field name="name">WooCommerce Quotations</field>
+			<field name="res_model">sale.order</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="context">{"not_woo_order":False}</field>
+			<field name="domain">[('woo_order_id','!=',False),('state','in',('draft','sent','cancel'))]</field>
+			<field name="view_id" ref="view_order_tree_woo_ept"></field>
+            <field name="search_view_id" ref="sale.view_sales_order_filter"/>
+           	<field name="help" type="html">
+              <div class="oe_empty_woo_sale_quotation">
+                  <br/><br/><br/>
+                  <p>
+                    <b>There is no any Sale Quotation synchronised from any of your WooCommerce Instance yet.</b>
+                  </p>
+                  <p>
+                    You can't create Sale Quotation manually and push it to WooCommerce. Through only import Sale Quotation from
+                    any of your WooCommerce Instance, you can see your Quotation here.Import Sale Quotation can be performed by 2 ways. 
+                  </p>
+                  <p>
+                  <b>1.</b> Via automatic jobs to import Sale Quotation at frequent amount of time. <br/>
+                  Go to menu Settings >> Technical >> Automation >> Schedule Actions and activate automatic Job for Import Quotation from WooCommerce.
+                  However from WooCommerce settings you can set your preferred timings for auto import Sale Quotation from WooCommerce.
+                  </p>
+                  <p>
+                  <b>2.</b> Manually Import Orders at any time <br/> 
+                  Go to menu WooCommerce >> Processes >> Woo Operations and select your instances and option "Import Orders". 
+                  Clicking on "OK" button will import all <b>Open</b> orders from WooCommerce to ERP.
+                  </p>
+				  <p>
+				  <b>3.</b>At the time of import order,you must configure workflow order status.<br/>
+				  Go to WooCommerce >>Configuration>> Order Status Configuration
+				  </p>
+              </div>
+          </field>
+		</record>
+
+		<record id="action_woo_sales_order" model="ir.actions.act_window">
+			<field name="name">WooCommerce Sales Order</field>
+			<field name="res_model">sale.order</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="context">{"not_woo_order":False}</field>
+			<field name="domain">[('woo_order_id','!=',False),('state','not in',('draft','sent','cancel'))]</field>
+			<field name="view_id" ref="view_order_tree_woo_ept"></field>
+            <field name="search_view_id" ref="sale.view_sales_order_filter"/>
+            <field name="help" type="html">
+              <div class="oe_empty_woo_sale_order">
+                  <br/><br/><br/>
+                  <p>
+                    <b>There is no any Sale Order synchronised from any of your WooCommerce Instance yet.</b>
+                  </p>
+                  <p>
+                    You can't create Sale Order manually and push it to WooCommerce. Through only import Sale Order from
+                    any of your WooCommerce Instance, you can see your Orders here. Import Sale Order can be performed by 2 ways. 
+                  </p>
+                  <p>
+                  <b>1.</b> Via automatic jobs to import Sale Orders at frequent amount of time. <br/>
+                  Go to menu WooCommerce >> Configuration >> Settings, Select Instance for which you want to import orders, Here in <b>Order Information</b> you can see option of <i>Auto Order Import</i>.
+                  </p>
+                  <p>
+                  <b>2.</b> Manually Import Orders at any time <br/> 
+                  Go to menu WooCommerce >> Processes >> WooCommerce Operations and select your instances and option "Import Sale Order". 
+                  Clicking on "OK" button will import all configured status orders (On Hold, Processing, Pending Payments, Completed) from WooCommerce to ERP.
+                  </p>
+				  <p>
+				  <b>3.</b>At the time of import order,you must configure Financial Status and Auto Workflow.<br/>
+				  Go to WooCommerce >> Configuration >> Financial Status
+				  </p>
+
+              </div>
+          </field>
+		</record>		
+
+     <menuitem id="woo_menu_item_sales" name="Sales"
+      parent="woo_commerce_ept.woo_commerce_main_menu" sequence="5"/>
+      
+	<menuitem id="menu_item_woo_customers" name="Customers"
+		parent="woo_menu_item_sales" sequence="1"
+		action="action_woo_partner_form" />
+
+     <menuitem id="woo_menu_item_quotation_order" name="Quotations"
+      parent="woo_commerce_ept.woo_menu_item_sales" 
+      action="action_woo_sale_quotation"
+      sequence="5"/>     
+
+
+	
+     <menuitem id="woo_menu_item_sales_order" name="Sales Order"
+      parent="woo_commerce_ept.woo_menu_item_sales" 
+      action="action_woo_sales_order"
+      sequence="10"/>
+      
+		<record id="action_woo_sale_instance_ept" model="ir.actions.act_window">
+	        <field name="name">WooCommerce Orders</field>
+			<field name="res_model">sale.order</field>
+	        <field name="view_type">form</field>
+	        <field name="view_id" ref="view_order_tree_woo_ept"/>
+			<field name="domain">[('woo_instance_id','=',active_id)]</field>
+		</record>      
+      
+
+		<record id="action_woo_instance_sale_quotation" model="ir.actions.act_window">
+	        <field name="name">WooCommerce Quotations</field>
+			<field name="res_model">sale.order</field>
+	        <field name="view_type">form</field>
+	        <field name="view_id" ref="view_order_tree_woo_ept"/>
+			<field name="domain">[('woo_order_id','!=',False),('state','in',('draft','sent','cancel')),('woo_instance_id','=',active_id)]</field>
+		</record>
+		<record id="action_woo_instance_sales_order_only" model="ir.actions.act_window">
+	        <field name="name">WooCommerce Sales Order</field>
+			<field name="res_model">sale.order</field>
+	        <field name="view_type">form</field>
+	        <field name="view_id" ref="view_order_tree_woo_ept"/>
+			<field name="domain">[('woo_order_id','!=',False),('state','not in',('draft','sent','cancel')),('woo_instance_id','=',active_id)]</field>
+		</record>     
+
+   </data>
+</odoo>

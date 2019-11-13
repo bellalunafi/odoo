@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+<odoo>
+  <data>	
+	<record id="woo_product_image_form_view_ept" model="ir.ui.view">
+		<field name="name">WooCommerce Product Image View</field>
+		<field name="model">woo.product.image.ept</field>
+		<field name="arch" type="xml">
+			<form string="WooCommerce Product Form View">
+				<sheet>								              														
+					<field name="url_image_id" widget="image" attrs="{'invisible':[('is_image_url','=',False)]}" class="oe_avatar oe_left" nolabel="1"/>
+					<field name="image" widget="image" attrs="{'invisible':[('is_image_url','=',True)]}" class="oe_avatar oe_left" nolabel="1"/>
+					<div class="oe_title oe_left" style="width: 500px;">
+						<div class="oe_edit_only">                            
+                            <field name="is_image_url" class="oe_inline" invisible="1"/>                            
+                        </div>						
+						<h1>
+                            <field name="sequence" required="1" default_focus="1" placeholder="Sequence" />                            
+                        </h1>                        										
+	                </div>				  				
+  					<group>							  							  						  						  												
+						<field name="url" attrs="{'invisible':[('is_image_url','=',False)]}"/>
+  					</group>	
+  					<group>							
+						<field name="response_url" attrs="{'invisible':[('is_image_url','=',False)]}"/>													
+  					</group>
+  					<group>	  				
+	  					<group>
+	  						<field name="woo_instance_id" required="1"/>	  						
+	  					</group>
+	  					<group>
+	  						<field name="woo_image_id" readonly="1"/>	  						
+	  					</group>	  					
+	  				</group>
+	  				<field name="woo_product_tmpl_id" invisible="1"/>
+	  			</sheet>  				
+  			</form>
+  		</field>
+  	</record>
+  </data>
+ </odoo>

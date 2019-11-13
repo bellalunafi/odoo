@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>           
+    	<record id="view_woo_process_import_export_from_more_ept" model="ir.ui.view">
+            <field name="name">Process Import/Export</field>
+            <field name="model">woo.process.import.export</field>
+            <field name="arch" type="xml">
+                <form string="Import/Export" style="height: 200px">
+                	<group invisible="context.get('process','') not in ['prepare_product_for_export']">
+                		<field name="instance_ids" widget="many2many_tags"/>
+                		<p colspan="2" class="alert alert-warning" role="alert"><b>Caution:</b> Products without Internal Reference (SKU) will not be prepare for export in Woo.</p>
+                	</group>
+                	<group invisible="context.get('process','') not in ['sync_selective_products']">
+						<field name="sync_images_with_product"/>
+						<field name="sync_price_with_product"/>
+					</group>
+                	<group string="Update Info With Export" invisible="context.get('process','') not in ['export_products']">
+						<group >
+							<field name="update_price_in_product"/>
+							<field name="update_stock_in_product"/>
+						</group>
+						<group>
+							<field name="publish"/>
+							<field name="update_image_in_product_export"/>
+						</group>
+					</group>
+					<group string="Update Info With Update" invisible="context.get('process','') != 'update_products'">
+						<group >
+							<field name="update_image_in_product_update"/>
+						</group>						
+					</group>
+					<group invisible="context.get('process','') != 'export_product_tags'">						
+						<p> Click on "Export Product Tags" button to export the selected product tags to WooCommerce</p>
+					</group>
+					<group invisible="context.get('process','') != 'update_product_tags'">						
+						<p> Click on "Update Product Tags" button to update the selected product tags to WooCommerce</p>
+					</group>
+					<group invisible="context.get('process','') != 'export_coupons'">						
+						<p> Click on "Export Coupons" button to export the selected coupons to WooCommerce</p>
+					</group>
+					<group invisible="context.get('process','') != 'update_coupons'">						
+						<p> Click on "Update Coupons" button to export the selected coupons to WooCommerce</p>
+					</group>
+					<group invisible="context.get('process','') != 'export_product_categ'">						
+						<p> Click on "Export Product Categories" button to export the selected product categories and it's <b>parent categories</b> in WooCommerce</p>
+					</group>
+					<group invisible="context.get('process','') != 'update_product_categ'">						
+						<p> Click on "Update Product Categories" button to update the selected product categories and it's <b>parent categories</b> in WooCommerce</p>
+					</group>					
+                	<footer>                        
+                        <button name="prepare_product_for_export" invisible="context.get('process','') != 'prepare_product_for_export'" string="Prepare Product For Export" type="object" class="oe_highlight"/>
+                        <button name="export_products" invisible="context.get('process','') != 'export_products'" string="Export Products" type="object" class="oe_highlight"/>
+                        <button name="publish_multiple_products" invisible="context.get('process','') != 'publish_multiple_products'" string="Publish Multiple Products" type="object" class="oe_highlight"/>
+                        <button name="unpublish_multiple_products" invisible="context.get('process','') != 'unpublish_multiple_products'" string="UnPublish Multiple Products" type="object" class="oe_highlight"/>
+                        <button name="update_products" invisible="context.get('process','') != 'update_products'" string="Update Products" type="object" class="oe_highlight"/>
+                        <button name="update_price" invisible="context.get('process','') != 'update_price'" string="Update Price" type="object" class="oe_highlight"/>
+                        <button name="update_stock_in_woo" invisible="context.get('process','') != 'update_stock'" string="Update Stock" type="object" class="oe_highlight"/>
+                        <button name="sync_selective_products" invisible="context.get('process','') != 'sync_selective_products'" string="Sync Products" type="object" class="oe_highlight"/>
+                        <button name="set_product_images" invisible="context.get('process','') != 'set_product_images'" string="Update Images" type="object" class="oe_highlight"/>
+                        <button name="export_product_tags" invisible="context.get('process','') != 'export_product_tags'" string="Export Product Tags" type="object" class="oe_highlight"/>
+                        <button name="update_product_tags" invisible="context.get('process','') != 'update_product_tags'" string="Update Product Tags" type="object" class="oe_highlight"/>
+                        <button name="export_coupons" invisible="context.get('process','') != 'export_coupons'" string="Export Coupons" type="object" class="oe_highlight"/>
+                        <button name="update_coupons" invisible="context.get('process','') != 'update_coupons'" string="Update Coupons" type="object" class="oe_highlight"/>                                                
+                        <button name="export_product_categ" invisible="context.get('process','') != 'export_product_categ'" string="Export Product Categories" type="object" class="oe_highlight"/>                                              
+                        <button name="update_product_categ" invisible="context.get('process','') != 'update_product_categ'" string="Update Product Categories" type="object" class="oe_highlight"/>
+                        <button string="Cancel" class="oe_highlight" special="cancel" />
+                    </footer>
+               </form>
+            </field>
+        </record>       
+        
+       	<act_window name="Prepare Product For Export in Woo" res_model="woo.process.import.export"
+		src_model="product.template" view_mode="form" view_type="form"
+		target="new" multi="True" key2="client_action_multi"
+		id="action_wizard_woo_prepare_product_for_export"
+		view_id="view_woo_process_import_export_from_more_ept"			
+		context="{'process':'prepare_product_for_export'}"/>
+		
+		<act_window name="Export Products" res_model="woo.process.import.export"
+		src_model="woo.product.template.ept" view_mode="form" view_type="form"
+		target="new" multi="True" key2="client_action_multi"
+		id="action_wizard_woo_export_products"
+		view_id="view_woo_process_import_export_from_more_ept"			
+		context="{'process':'export_products'}"/>
+		
+	    <act_window name="Publish Multiple Products" res_model="woo.process.import.export"
+		src_model="woo.product.template.ept" view_mode="form" view_type="form"
+		target="new" multi="True" key2="client_action_multi"
+		id="action_wizard_woo_publish_multiple_products"
+		view_id="view_woo_process_import_export_from_more_ept"			
+		context="{'process':'publish_multiple_products'}"/>
+		
+	    <act_window name="UnPublish Multiple Products" res_model="woo.process.import.export"
+		src_model="woo.product.template.ept" view_mode="form" view_type="form"
+		target="new" multi="True" key2="client_action_multi"
+		id="action_wizard_woo_unpublish_multiple_products"
+		view_id="view_woo_process_import_export_from_more_ept"			
+		context="{'process':'unpublish_multiple_products'}"/>						
+		
+	    <act_window name="Update Products" res_model="woo.process.import.export"
+		src_model="woo.product.template.ept" view_mode="form" view_type="form"
+		target="new" multi="True" key2="client_action_multi"
+		id="action_wizard_woo_update_products"
+		view_id="view_woo_process_import_export_from_more_ept"			
+		context="{'process':'update_products'}"/>
+
+	    <act_window name="Update Stock" res_model="woo.process.import.export"
+		src_model="woo.product.template.ept" view_mode="form" view_type="form"
+		target="new" multi="True" key2="client_action_multi"
+		id="action_wizard_woo_update_stock"
+		view_id="view_woo_process_import_export_from_more_ept"			
+		context="{'process':'update_stock'}"/>
+
+	    <act_window name="Update Price" res_model="woo.process.import.export"
+		src_model="woo.product.template.ept" view_mode="form" view_type="form"
+		target="new" multi="True" key2="client_action_multi"
+		id="action_wizard_woo_update_price"
+		view_id="view_woo_process_import_export_from_more_ept"			
+		context="{'process':'update_price'}"/>
+		
+	    <act_window name="Update Images" res_model="woo.process.import.export"
+		src_model="woo.product.template.ept" view_mode="form" view_type="form"
+		target="new" multi="True" key2="client_action_multi"
+		id="action_wizard_woo_set_selective_product_images"
+		view_id="view_woo_process_import_export_from_more_ept"			
+		context="{'process':'set_product_images'}"/>		
+		
+	    <act_window name="Sync Products" res_model="woo.process.import.export"
+		src_model="woo.product.template.ept" view_mode="form" view_type="form"
+		target="new" multi="True" key2="client_action_multi"
+		id="action_wizard_woo_publish_sync_selective_products"
+		view_id="view_woo_process_import_export_from_more_ept"			
+		context="{'process':'sync_selective_products'}"/>
+		
+		<act_window name="Export Product Tags" res_model="woo.process.import.export"
+		src_model="woo.tags.ept" view_mode="form" view_type="form"
+		target="new" multi="True" key2="client_action_multi"
+		id="action_wizard_woo_export_product_tags"
+		view_id="view_woo_process_import_export_from_more_ept"			
+		context="{'process':'export_product_tags'}"/>
+		
+		<act_window name="Export Coupons" res_model="woo.process.import.export"
+		src_model="woo.coupons.ept" view_mode="form" view_type="form"
+		target="new" multi="True" key2="client_action_multi"
+		id="action_wizard_woo_export_coupons"
+		view_id="view_woo_process_import_export_from_more_ept"			
+		context="{'process':'export_coupons'}"/>
+		
+		<act_window name="Update Coupons" res_model="woo.process.import.export"
+		src_model="woo.coupons.ept" view_mode="form" view_type="form"
+		target="new" multi="True" key2="client_action_multi"
+		id="action_wizard_woo_update_coupons"
+		view_id="view_woo_process_import_export_from_more_ept"			
+		context="{'process':'update_coupons'}"/>
+		
+		<act_window name="Update Product Tags" res_model="woo.process.import.export"
+		src_model="woo.tags.ept" view_mode="form" view_type="form"
+		target="new" multi="True" key2="client_action_multi"
+		id="action_wizard_woo_update_product_tags"
+		view_id="view_woo_process_import_export_from_more_ept"			
+		context="{'process':'update_product_tags'}"/>
+		
+		<act_window name="Export Product Categories" res_model="woo.process.import.export"
+		src_model="woo.product.categ.ept" view_mode="form" view_type="form"
+		target="new" multi="True" key2="client_action_multi"
+		id="action_wizard_woo_export_product_categs"
+		view_id="view_woo_process_import_export_from_more_ept"			
+		context="{'process':'export_product_categ'}"/>				
+		
+		<act_window name="Update Product Categories" res_model="woo.process.import.export"
+		src_model="woo.product.categ.ept" view_mode="form" view_type="form"
+		target="new" multi="True" key2="client_action_multi"
+		id="action_wizard_woo_update_product_categs"
+		view_id="view_woo_process_import_export_from_more_ept"			
+		context="{'process':'update_product_categ'}"/>						
+		
+
+        <record id="view_woo_process_import_export_ept" model="ir.ui.view">
+            <field name="name">Process Import/Export</field>
+            <field name="model">woo.process.import.export</field>
+            <field name="priority">11</field>
+            <field name="arch" type="xml">
+                <form string="Import/Export">
+                	<sheet>
+	                	<group>						                	
+		                	<field name='instance_ids' domain="[('state','=','confirmed')]" widget="many2many_tags" options="{'no_create':True,'no_create_edit': True}"/>                	
+	                	</group>
+	                	<notebook>
+	                		<page string="Woo => ERP">
+								<group>
+									<group name="import_so" string="Sales Orders">
+										<field name="is_import_orders"/>
+										<field name="past_orders_after_date" style="width:50%" attrs="{'invisible':[('is_import_orders','=',False)]}" />
+										<field name="past_orders_before_date" style="width:50%" attrs="{'invisible':[('is_import_orders','=',False)]}" />
+										<field name="is_import_customers"/>
+										<field name="sync_woo_coupons"/>    
+									</group>		                			
+									<group name="import_product" string="Products">
+										<field name="sync_product_from_woo"/>
+										<field name="is_skip_sync_existing_product" attrs="{'invisible':[('sync_product_from_woo','=',False)]}"/>
+										<field name="sync_attributes"></field>
+										<field name="sync_product_category_from_woo"/>
+										<field name="sync_product_tags_from_woo"/>
+										<field name="is_import_stock"/>								
+									</group>									
+								</group>
+	                		</page>
+	                		<page string="ERP => Woo">
+	                			<group>
+		                			<group name="op_product" string="Product Operations">
+		                				<field name="is_export_products"/>
+		                				<field name="is_update_products"/>
+										<field name="is_publish_products"/>
+										<field name="is_unpublish_products"/>
+		                			</group>
+		                			<group name="mis_product" string="Miscellaneous">
+		                				<field name="is_update_stock"/>
+		                				<field name="is_update_price"/>
+		                				<field name="is_update_image"/>
+		                				<field name="is_update_coupon"/>
+		                			</group>
+		                			<group name="mis_product" string="Coupons, Categories &amp; Tags">
+		                				<field name="is_export_coupons"/>
+		                				<field name="is_export_product_categ"/>
+		                				<!--  <field name="is_update_product_categ"/>-->
+		                				<field name="is_export_product_tags"/>
+		                				<!--  <field name="is_update_product_tags"/>-->                						                					                													
+									</group>
+									<group name="op_order" string="Shipment Status">
+		                				<field name="is_update_order_status"/>                				
+	                				</group>                						                				
+                				</group>
+	                		</page>
+	                	</notebook>	
+						<footer>
+							<button string="Execute" class="oe_highlight" type="object" name="execute"/>
+	                        <button string="Cancel" class="oe_highlight" special="cancel" />
+	                    </footer>
+                    </sheet>
+               </form>
+            </field>
+        </record>
+        
+		<record id="action_wizard_woo_instance_processes_ept" model="ir.actions.act_window">
+         	<field name="name">WooCommerce Operations</field>
+         	<field name="type">ir.actions.act_window</field>
+         	<field name="res_model">woo.process.import.export</field>
+         	<field name="view_type">form</field>
+         	<field name="view_mode">form</field>
+         	<field name="context">{'default_instance_id':active_id}</field>
+         	<field name="target">new</field>
+         </record>        		
+		
+		<record id="action_wizard_woo_processes_ept" model="ir.actions.act_window">
+         	<field name="name">WooCommerce Operations</field>
+         	<field name="type">ir.actions.act_window</field>
+         	<field name="res_model">woo.process.import.export</field>
+         	<field name="view_type">form</field>
+         	<field name="view_mode">form</field>
+         	<field name="target">new</field>
+         </record>
+		
+		
+        <menuitem id="menu_woo_processes_ept" parent="woo_commerce_ept.woo_commerce_main_menu" name="Processes" groups="woo_commerce_ept.group_woo_ept"  sequence="15"/>
+
+        <menuitem id="menu_woo_import_export_process_ept" name="WooCommerce Operations"
+         parent="menu_woo_processes_ept" action="action_wizard_woo_processes_ept" sequence="20"/>		
+		
+		
+    </data>
+</odoo>

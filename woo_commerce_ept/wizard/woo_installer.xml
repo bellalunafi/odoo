@@ -1,0 +1,383 @@
+<odoo>
+    <data>
+    
+<!--     Views -->
+    
+        <record id="view_configure_instance_installer" model="ir.ui.view">
+            <field name="name">woo.instance.config.installer.form</field>
+            <field name="model">woo.instance.config.installer</field>
+            <field name="arch" type="xml">
+            	<form string="Configure Instance">
+            		<sheet>
+						<group>
+							<group>
+								<field name="name" required="1"/>
+								<field name='consumer_key' required="1"/>
+								<field name='consumer_secret' required="1"/>
+								<field name="woo_version" required="1"/>	
+		                        <div attrs="{'invisible':[('woo_version','=','old')]}">
+									<field name="is_latest" class="oe_inline"/>
+									<label for="is_latest"/>
+								</div>						
+							</group>
+							<group>                    		
+								<field name='host' required="1"/>														                    	
+								<field name='country_id' required="1"/>
+								<field name='verify_ssl'/>
+								<field name='is_image_url'/>
+							</group>													
+						</group>
+						<group string="Administrator Info" attrs="{'invisible':[('is_image_url','=',True)]}">
+							<group>
+	                   			<field name='admin_username' attrs="{'required':[('is_image_url','=',False)],'invisible':[('is_image_url','=',True)]}"/>
+	                   		</group>
+	                   		<group>
+	                   			<field name='admin_password' password="1" attrs="{'required':[('is_image_url','=',False)],'invisible':[('is_image_url','=',True)]}"/>
+	                   		</group>
+	                    </group>
+	                    <footer>
+	                    	<button name="action_next" type="object" string="Continue" class="oe_highlight"/>
+	                    </footer>
+                    </sheet>
+           		</form>
+            </field>
+        </record>
+        
+        <record id="view_general_configuration" model="ir.ui.view">
+            <field name="name">woo.instance.general.config.installer.form</field>
+            <field name="model">woo.instance.general.config.installer</field>
+            <field name="arch" type="xml">
+                <form string="Configure WooCommerce" class="oe_form_configuration">
+	                <sheet>                    
+	                    <separator string="WooCommerce Instances"/>
+	                    <group>
+	                        <label for="id" string="WooCommerce Instances"/>
+	                        <div>
+	                            <div>
+	                                <label for="woo_instance_id" string="Select Instance"/>
+	                                <field name="woo_instance_id"
+	                                    widget="selection"
+	                                    attrs="{'required':[('woo_instance_id','!=',False)]}"
+	                                    class="oe_inline"/>
+	                                <button string="Create More Instance"
+	                                    icon="fa-arrow-right text-success"
+	                                    name="%(res_config_action_woo_instance)d"
+	                                    type="action"
+	                                    class="oe_link"/>
+	                            </div>
+	                       </div>
+	                    </group>
+	                    <separator string="General Information" attrs="{'invisible': [('woo_instance_id', '=', False)]}"/>
+	                    <group attrs="{'invisible': [('woo_instance_id', '=', False)]}">
+	                        <label for="id" string="Options"/>
+	                        <div name="general_config">
+	                            <div>
+	                                <label for="warehouse_id"/>
+	                                <field name="warehouse_id"                            
+	                                widget="selection" 
+	                                attrs="{'required':[('woo_instance_id','!=',False)]}" class="oe_inline"/>
+	                            </div> 
+	                            <div>
+	                                <!-- <label for="country_id"/> -->
+	                                <field name="country_id" invisible="1" class="oe_inline"/>
+	                            </div>
+	                            <div>
+	                                <label for="company_id"/>
+	                                <field name="company_id" widget="selection" attrs="{'required':[('woo_instance_id','!=',False)]}" class="oe_inline"/>
+	                            </div>
+	                            <div>
+	                                <label for="lang_id"/>
+	                                <field name="lang_id" widget="selection" attrs="{'required':[('woo_instance_id','!=',False)]}" class="oe_inline"/>
+	                            </div>
+	                            <div id="fiscal_position">
+	                            	<label for="fiscal_position_id"/>
+	                            	<field name="fiscal_position_id" class="oe_inline"/>
+	                            </div>
+	                        </div>
+	                    </group>  
+	                    <separator string="Product Information" attrs="{'invisible': [('woo_instance_id', '=', False)]}"/>
+	                    <group attrs="{'invisible': [('woo_instance_id', '=', False)]}">
+	                        <label for="id" string="Products"/>
+	                        <div name="product_config">
+	                            <div>
+	                                <label for="discount_product_id"/>
+	                                <field name="discount_product_id" attrs="{'required':[('woo_instance_id','!=',False)]}" class="oe_inline"/>
+	                            </div>
+	                            <div>
+	                                <label for="fee_line_id"/>
+	                                <field name="fee_line_id" attrs="{'required':[('woo_instance_id','!=',False)]}" class="oe_inline"/>
+                            	</div>
+	                        </div>
+	                        <label for="id" string="Products Bulk Export Operation"/>
+	                        <div name="product_export_config">
+	                            <div>
+	                                <label for="is_set_price"/>
+	                                <field name="is_set_price" class="oe_inline"/>
+	                            </div>
+	                            <div>
+	                                <label for="is_set_stock"/>
+	                                <field name="is_set_stock" class="oe_inline"/>
+	                            </div>
+	                            <div>
+	                                <label for="is_publish"/>
+	                                <field name="is_publish" class="oe_inline"/>
+	                            </div>
+	                            <div>
+	                                <label for="is_set_image"/>
+	                                <field name="is_set_image" class="oe_inline"/>
+	                            </div>
+	                        </div>
+	                        <label for="id" string="Products Bulk Sync/Import Operation"/>
+                        	<div name="product_import_config">
+	                        	<div>
+	                                <label for="sync_images_with_product"/>
+	                                <field name="sync_images_with_product" class="oe_inline"/>
+	                            </div>
+	                            <div>
+	                                <label for="sync_price_with_product"/>
+	                                <field name="sync_price_with_product" class="oe_inline"/>
+	                            </div>
+                        	</div>
+	                    </group>
+	                    <separator string="Payment Information" attrs="{'invisible': [('woo_instance_id', '=', False)]}"/>
+	                    <group attrs="{'invisible': [('woo_instance_id', '=', False)]}">
+	                        <label for="id" string="Payment"/>
+	                        <div name="payment_config">
+	                            <div>
+	                                <label for="pricelist_id"/>
+	                                <field name="pricelist_id" attrs="{'required':[('woo_instance_id','!=',False)]}" class="oe_inline"/>
+	                            </div>
+	                            <div>
+	                                <label for="payment_term_id"/>
+	                                <field name="payment_term_id" attrs="{'required':[('woo_instance_id','!=',False)]}" class="oe_inline"/>
+	                            </div>
+	                        </div>
+	                    </group>
+	                    <separator string="Order Information" attrs="{'invisible': [('woo_instance_id', '=', False)]}"/>
+	                    <group attrs="{'invisible': [('woo_instance_id', '=', False)]}">
+	                        <label for="id" string="Orders"/>
+	                        <div name="order_config">
+	                            <div>
+	                                <label for="import_order_status_ids" />
+	                                <field name="import_order_status_ids" widget="many2many_tags" options="{'no_create':True,'no_create_edit': True}" class="oe_inline"/>
+	                            </div>
+	                            <div>
+	                                <label for="order_prefix" />
+	                                <field name="order_prefix"  class="oe_inline"/>
+	                            </div>
+	                            <div>  
+	                            	<label for="section_id"/>
+									<field name="section_id" options="{'no_create': True}" class="oe_inline" />                            	
+	                            </div>
+	                            <!-- auto_import_product --> 
+	                            <div>
+                            		<label for="auto_import_product"/>
+                            		<field name="auto_import_product" class="oe_inline"/>
+                            	</div>
+	                            <div>
+	                                <label for="order_auto_import" />
+	                                <field name="order_auto_import"  class="oe_inline"/>								
+	                            </div>                                                        
+	                            <div attrs="{'invisible': [('order_auto_import', '=', False)]}">
+	                                <label for="id" string="I want to import order at every "/>
+	                                <field name="order_import_interval_number" attrs="{'required': [('order_auto_import', '=', True)]}" class="oe_inline"/>
+	                                <field name="order_import_interval_type" attrs="{'required': [('order_auto_import', '=', True)]}" class="oe_inline"/>
+	                                <field name="order_import_next_execution" attrs="{'required': [('order_auto_import', '=', True)]}" class="oe_inline"/>
+	                                <field name="order_import_user_id" attrs="{'required': [('order_auto_import', '=', True)]}" class="oe_inline" />
+	                            </div>                            
+	                            <div>
+	                                <label for="order_auto_update"/>
+	                                <field name="order_auto_update" class="oe_inline" help="If Ticked, WooCommerce Order will be automatically updated by system to WooCommerce."/>
+	                            </div>
+	                            <div attrs="{'invisible': [('order_auto_update', '=', False)]}">
+	                                <label for="id" string="I want to Auto Update Order at every "/>
+	                                <field name="order_update_interval_number" attrs="{'required': [('order_auto_update', '=', True)]}" class="oe_inline"/>
+	                                <field name="order_update_interval_type" attrs="{'required': [('order_auto_update', '=', True)]}" class="oe_inline"/>
+	                                <field name="order_update_next_execution" attrs="{'required': [('order_auto_update', '=', True)]}" class="oe_inline"/>
+	                                <field name="order_update_user_id" attrs="{'required': [('order_auto_update', '=', True)]}" class="oe_inline" />                                
+	                            </div>	
+	                        </div>
+	                    </group>
+	                    <separator string="Stock Information" attrs="{'invisible': [('woo_instance_id', '=', False)]}"/>
+	                    <group attrs="{'invisible': [('woo_instance_id', '=', False)]}">
+	                        <label for="id" string="Stock"/>
+	                        <div name="stock_config">
+	                        	<div>
+	                                <label for="stock_field" />
+	                                <field name="stock_field" widget="selection" domain="[('model_id.model','=','product.product'),('name','in',['qty_available','virtual_available'])]" attrs="{'required':[('woo_instance_id','!=',False)]}" class="oe_inline"/>
+	                            </div>
+	                        	<div>
+	                                <label for="stock_auto_export"/>
+	                                <field name="stock_auto_export" class="oe_inline" help="If Ticked, Product Stock will be automatically updated by system to WooCommerce."/>
+	                            </div>
+	                            <div attrs="{'invisible': [('stock_auto_export', '=', False)]}">
+	                                <label for="id" string="I want to Auto Update Stock at every "/>
+	                                <field name="update_stock_interval_number" attrs="{'required': [('stock_auto_export', '=', True)]}" class="oe_inline"/>
+	                                <field name="update_stock_interval_type" attrs="{'required': [('stock_auto_export', '=', True)]}" class="oe_inline"/>
+	                                <field name="update_stock_next_execution" attrs="{'required': [('stock_auto_export', '=', True)]}" class="oe_inline"/>
+	                                <field name="update_stock_user_id" attrs="{'required': [('stock_auto_export', '=', True)]}" class="oe_inline" />
+	                            </div>                            
+	                        </div>
+                    	</group>
+	                    <footer>
+		               		<button name="action_next" type="object" string="Continue" class="oe_highlight"/>
+		                </footer>
+	                </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <record id="view_auto_workflow_configuration" model="ir.ui.view">
+            <field name="name">sale.workflow.process.config.installer.form</field>
+            <field name="model">sale.workflow.process.config.installer</field>            
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="sale_workflow_process">
+					<sheet>
+						<group>
+		                    <group>
+		                    	<field name="name" required="1"/>
+		                    </group>
+		                    <group>
+								<field name="journal_id" attrs="{'invisible':[('register_payment','=',False)],'required':[('register_payment','!=',False)]}"/>
+								<field name="sale_journal_id" required="1"/>						
+		                    </group>
+						</group>
+	                    <group>
+	                    	<group  string="Worflow Option">
+	                    		<field name="validate_order"/>
+	                    		<field name="create_invoice"  attrs="{'invisible':[('validate_order','=',False)]}"/>
+	                    		<field name="validate_invoice" attrs="{'invisible':[('create_invoice','=',False)]}"/>							
+	                    		<field name="register_payment" attrs="{'invisible':[('validate_invoice','=',False)]}"/>
+	                    		<field name="invoice_date_is_order_date" attrs="{'invisible':[('validate_invoice','=',False)]}"/>	
+	                    	</group>
+	                    	<group string="Order Configuration">
+	                    		<field name="picking_policy" required="1"/>
+	                    		<field name="invoice_policy"/> 
+	                    	</group>
+	                    </group>
+	                    <footer>
+		               		<button name="action_next" type="object" string="Continue" class="oe_highlight"/>
+		                </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <record id="view_financial_status_configuration" model="ir.ui.view">
+            <field name="name">woo.instance.financial.status.config.installer.form</field>
+            <field name="model">woo.instance.financial.status.config.installer</field>            
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="sale_workflow_process">
+					<sheet>
+						<group>
+		                    <group>
+		                    	<field name="woo_instance_id" options="{'no_create':True,'no_create_edit': True}" domain="[('state','=','confirmed')]"/>
+		                    	<field name="auto_workflow_id"/>
+		                    	<field name="payment_gateway_id"/>
+		                    	<field name="financial_status"/>		                    	
+		                    </group>		                    
+						</group>	                    
+	                    <footer>
+		               		<button name="action_next" type="object" string="Continue" class="oe_highlight"/>
+		                </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>                                	
+
+<!-- Views Over -->
+
+<!-- Actions -->
+												
+        <record id="action_configure_instance_installer" model="ir.actions.act_window">
+            <field name="name"><![CDATA[<center><h2 class="oe_slogan" style="letter-spacing: -1px !important; color:#087DDA !important;">Setup your WooCommerce Instance</h2></center>]]></field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">woo.instance.config.installer</field>
+            <field name="view_id" ref="view_configure_instance_installer"/>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        
+        <record id="action_set_general_configuration" model="ir.actions.act_window">
+            <field name="name"><![CDATA[<center><h2 class="oe_slogan" style="letter-spacing: -1px !important; color:#087DDA !important;">Configure your WooCommerce Instance</h2></center>]]></field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">woo.instance.general.config.installer</field>
+            <field name="view_id" ref="view_general_configuration"/>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>                     
+        
+        <record id="action_set_auto_workflow_configuration" model="ir.actions.act_window">
+            <field name="name"><![CDATA[<center><h2 class="oe_slogan" style="letter-spacing: -1px !important; color:#087DDA !important;">Configure your WooCommerce Automatic Workflow</h2></center>]]></field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.workflow.process.config.installer</field>
+            <field name="view_id" ref="view_auto_workflow_configuration"/>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        
+        <record id="action_set_financial_status_configuration" model="ir.actions.act_window">
+            <field name="name"><![CDATA[<center><h2 class="oe_slogan" style="letter-spacing: -1px !important; color:#087DDA !important;">Configure your WooCommerce Financial Status</h2></center>]]></field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">woo.instance.financial.status.config.installer</field>
+            <field name="view_id" ref="view_financial_status_configuration"/>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>                
+               
+<!-- Actions Over-->        
+
+        <record id="woo_operations_action_redirect" model="ir.actions.client">
+            <field name="name">Open WooCommerce Dashboard menu</field>
+            <field name="tag">reload</field>
+            <field name="params" eval="{'menu_id': ref('woo_commerce_ept.woo_commerce_main_menu')}"/>
+        </record>
+        
+        
+<!-- Todo's 
+
+         <record id="woo_main_dashboard_todo" model="ir.actions.todo">
+        	<field name="name">WooCommerce Dashboard</field>
+            <field name="action_id" ref="woo_operations_action_redirect"/>
+            <field name="sequence">5</field>
+            <field name="state">done</field>
+        </record>
+        
+        <record id="action_set_financial_status_configuration_todo" model="ir.actions.todo">
+            <field name="name">Configure your WooCommerce Financial Status</field>
+            <field name="action_id" ref="action_set_financial_status_configuration"/>
+            <field name="sequence">4</field>
+            <field name="state">done</field>
+        </record>
+
+        <record id="action_set_auto_workflow_configuration_todo" model="ir.actions.todo">
+            <field name="name">Configure your WooCommerce Automatic Workflow</field>
+            <field name="action_id" ref="action_set_auto_workflow_configuration"/>
+            <field name="sequence">3</field>
+            <field name="state">done</field>
+        </record>        
+
+        <record id="action_set_general_configuration_todo" model="ir.actions.todo">
+            <field name="name">Configure your WooCommerce Instance</field>
+            <field name="action_id" ref="action_set_general_configuration"/>
+            <field name="sequence">2</field>
+            <field name="state">done</field>
+        </record>
+
+		<record id="woo_configuration_installer_todo" model="ir.actions.todo">
+        	<field name="name">Setup your WooCommerce Instance</field>
+            <field name="action_id" ref="action_configure_instance_installer"/>
+            <field name="sequence">1</field>
+            <field name="state">open</field>
+        </record>
+        
+ Todo's Over         -->
+                                          
+    </data>
+</odoo>

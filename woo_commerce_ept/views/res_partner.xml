@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		
+		<record id="view_partner_form_ept" model="ir.ui.view">
+				<field name="name">res.partner.form.ept</field>
+				<field name="model">res.partner</field>
+				<field name="type">form</field>
+				<field name="inherit_id" ref="base.view_partner_form"/>
+	            <field name="arch" type="xml">
+					<field name="user_id" position="after">						
+						<field name="woo_customer_id" readonly="1" attrs="{'invisible':[('woo_customer_id','=',False)]}"/>
+					</field>
+					<field name="user_id" position="after">						
+						<field name="woo_company_name_ept" readonly="1" attrs="{'invisible':[('woo_company_name_ept','=',False)]}"/>
+					</field>
+				</field>
+		</record>
+        <record id="view_woo_partner_tree" model="ir.ui.view">
+            <field name="name">res.partner.tree</field>
+            <field name="model">res.partner</field>
+            <field eval="100" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Contacts" create="false">
+                    <field name="name"/>
+                    <field name="function" invisible="1"/>
+                    <field name="phone"/>
+                    <field name="email"/>
+                    <field name="user_id" invisible="1"/>
+                    <field name="company_id" invisible="1"/>
+                    <field name="is_company" invisible="1"/>
+                    <field name="country_id" invisible="1"/>
+                    <field name="parent_id" invisible="1"/>
+					<field name="woo_customer_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_woo_partner_form" model="ir.actions.act_window">
+            <field name="name">Customers</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+ 			<field name="domain">[('woo_customer_id','!=',False)]</field> 
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="context">{"search_default_customer":1}</field>
+            <field name="view_id" ref="view_woo_partner_tree"/>
+            <field name="search_view_id" ref="base.view_res_partner_filter"/>
+	        <field name="help" type="html">
+	             <div class="oe_empty_woo_customers">
+	                 <br/><br/><br/>
+	                 <p>
+	                   <b>There are no any woo Customer Created yet</b>
+	                 </p>
+	                 <p>
+	                   You can't create WooCommerce Customer directly from here.When order is imported system will automatically 
+	                   create customer in ERP. 
+	                 </p>
+	             </div>
+			</field>
+        </record>
+		
+		<record id="action_woo_instance_partner_form" model="ir.actions.act_window">
+            <field name="name">Customers</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+ 			<field name="domain">[('woo_customer_id','like',active_id)]</field> 
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="search_view_id" ref="base.view_res_partner_filter"/>
+	        <field name="help" type="html">
+	             <div class="oe_empty_woo_customers">
+	                 <br/><br/><br/>
+	                 <p>
+	                   <b>There are no any WooCommerce Customer Created yet</b>
+	                 </p>
+	                 <p>
+	                   You can't create WooCommerce Customer directly from here. When order is imported system will automatically 
+	                   create customer in ERP. 
+	                 </p>
+	             </div>
+			</field>
+        </record>
+
+	</data>
+</odoo>

@@ -1,0 +1,98 @@
+<?xml version="1.0" ?>
+<odoo>
+  <data>	   	
+
+	<record id="import_woo_job_transaction_tree_view_ept" model="ir.ui.view">
+	    <field name="name">Woo Transaction log</field>
+	    <field name="model">woo.transaction.log</field>
+		<field name="arch" type="xml">
+            <tree string="Import Woo" create="false">
+				<field name="type"/>
+				<field name="create_date"/>
+				<field name="message"/>
+				<field name="mismatch_details" invisible="1"/>			
+			</tree>
+		</field>
+	</record>
+
+	<record id="import_woo_job_transaction_form_view_ept" model="ir.ui.view">
+		<field name="name">Woo Transaction Job</field>
+		<field name="model">woo.transaction.log</field>
+		<field name="arch" type="xml">
+			<form string="Woo Import Job">
+				<group>
+					<group>
+						<field name="create_date"/>
+						<field name="mismatch_details"/>
+					</group>
+				</group>
+				<group string="Message">
+					<field name="message" nolabel="1"/>
+				</group>
+			</form>
+		</field>
+	</record>	
+	<record id="woo_transaction_search_view_ept" model="ir.ui.view">
+            <field name="name">Woo Transaction Search View</field>
+            <field name="model">woo.transaction.log</field>
+			<field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Woo Instance">
+                	<field name="message"/>
+                	<field name="create_date"/>
+					<group expand="0" string="Group By...">
+						 <filter string="Instnace" name="instance" icon="terp-personal"  context="{'group_by':'woo_instance_id'}"/>
+						 <filter string="Type" name="type" icon="terp-personal" context="{'group_by':'type'}"/>
+						 <filter string="Message" name="message" icon="terp-personal" context="{'group_by':'message'}"/>
+						 <filter string="Date" name="date" icon="terp-personal" context="{'group_by':'create_date'}"/>
+
+					</group>  					
+				</search>
+			</field>
+	</record>
+
+	<record id="action_mismatch_log_ept" model="ir.actions.act_window">
+		<field name="name">WooCommerce Mismatch Details</field>
+		<field name="res_model">woo.transaction.log</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+		<field name="domain">[('mismatch_details','=',True)]</field>
+        <field name="view_id" ref="import_woo_job_transaction_tree_view_ept"/>
+        <field name="help" type="html">
+             <div>
+                 <br/><br/><br/>
+                 <p>
+                   <b>No WooCommerce Mismatch Details available right now.</b>
+                 </p>                 
+             </div>
+		</field>        
+	</record>
+
+	<record id="action_mismatch_instance_log_ept" model="ir.actions.act_window">
+		<field name="name">WooCommerce Mismatch Details</field>
+		<field name="res_model">woo.transaction.log</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+		<field name="domain">[('mismatch_details','=',True),('woo_instance_id','=',active_id)]</field>
+        <field name="view_id" ref="import_woo_job_transaction_tree_view_ept"/>
+        <field name="help" type="html">
+             <div>
+                 <br/><br/><br/>
+                 <p>
+                   <b>No WooCommerce Mismatch Details available right now.</b>
+                 </p>                 
+             </div>
+		</field>        
+	</record>
+		
+
+     <menuitem id="woo_job_log_ept" parent="woo_commerce_ept.woo_commerce_main_menu"
+     name="Log Details" groups="woo_commerce_ept.group_woo_ept" sequence="25"/>
+
+
+     <menuitem id="woo_mismatch_ept" name="Mismatch Details"
+      parent="woo_commerce_ept.woo_job_log_ept" 
+      action="action_mismatch_log_ept" sequence="26"/>
+
+  </data>
+</odoo>

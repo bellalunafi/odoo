@@ -1,0 +1,82 @@
+<?xml version="1.0" ?>
+<odoo>
+	<data>
+		<record id="woo_payment_gateway_tree_view_ept" model="ir.ui.view">
+	    <field name="name">Woo Payment Gateway</field>
+	    <field name="model">woo.payment.gateway</field>
+		<field name="arch" type="xml">
+            <tree string="Woo Payment Gateway">
+				<field name="name"/>
+				<field name="code"/>
+				<field name="woo_instance_id"/>
+			</tree>
+		</field>
+		</record>
+	
+	
+	<record id="woo_payment_gateway_form_view_ept" model="ir.ui.view">
+		<field name="name">Woo Payment Gateway</field>
+	    <field name="model">woo.payment.gateway</field>
+		<field name="arch" type="xml">
+			<form string="Woo Payment Gateway">
+				<sheet>
+					<group>
+						<group>
+							<field name="code"/>
+							<field name="name"/>
+						</group>
+						<group>
+							<field name="woo_instance_id" domain="[('state','=','confirmed')]" options="{'no_create':True,'no_create_edit': True}"/>
+						</group>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>	
+		
+	<record id="woo_payment_gateway_search_view_ept" model="ir.ui.view">
+            <field name="name">Woo Payment Gateway</field>
+	    <field name="model">woo.payment.gateway</field>
+			<field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Woo Payment Gateway">
+                	<field name="name"/>
+                	<field name="code"/>
+                	<group expand="0" string="Group By...">
+						 <filter name="payment_code" string="Payment Code" icon="terp-personal" context="{'group_by':'code'}"/>
+						 <filter name="instance" string="Instance" icon="terp-personal" context="{'group_by':'woo_instance_id'}"/>
+					</group>  					
+				</search>
+			</field>
+	</record>
+	
+	<record id="action_woo_payment_gateway_ept" model="ir.actions.act_window">
+		<field name="name">Payment Gateway</field>
+		<field name="res_model">woo.payment.gateway</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+             <div>
+                 <p>
+                   <b>No WooCommerce Payment Method Details are available right now.</b>
+                 </p>                 
+             </div>
+		</field>        
+	</record>
+	
+	<record id="action_woo_instance_payment_gateway_ept" model="ir.actions.act_window">
+		<field name="name">Payment Gateway</field>
+		<field name="res_model">woo.payment.gateway</field>
+		<field name="view_type">form</field>
+		<field name="domain">[('woo_instance_id','=',active_id)]</field>
+		<field name="view_id" ref="woo_payment_gateway_tree_view_ept"/>
+	</record>
+	
+	<menuitem id="woo_payment_gateway_ept" parent="woo_commerce_ept.woo_commerce_main_menu"
+     name="Payment" groups="woo_commerce_ept.group_woo_ept" sequence="23"/>
+
+    <menuitem id="woo_payment_methods_ept" name="Payment Gateway"
+      parent="woo_payment_gateway_ept" 
+      action="action_woo_payment_gateway_ept" sequence="24"/>
+    </data>
+</odoo>

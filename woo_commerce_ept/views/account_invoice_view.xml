@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+      <record id="woo_invoice_tree_ept" model="ir.ui.view">
+            <field name="name">account.invoice.tree</field>
+            <field name="model">account.invoice</field>
+            <field name="priority">100</field>
+            <field name="arch" type="xml">
+                <tree create="false" colors="blue:state == 'draft';black:state in ('proforma','proforma2','open');gray:state == 'cancel'" string="Invoice">
+                    <field name="partner_id" groups="base.group_user"/>
+                    <field name="commercial_partner_id" invisible="1"/>
+                    <field name="date_invoice"/>
+                    <field name="number"/>
+                    <field name="reference" invisible="1"/>
+                    <field name="name" invisible="1"/>
+                    <field name="journal_id" invisible="1"/>
+                    <!-- <field name="period_id" invisible="1" groups="account.group_account_user"/> -->
+                    <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                    <field name="user_id" string="Responsible"/>
+                    <field name="date_due"/>
+                    <field name="origin"/>
+                    <field name="currency_id" groups="base.group_multi_currency"/>
+                    <field name="residual" sum="Residual Amount"/>
+                    <field name="amount_untaxed" sum="Untaxed Amount"/>
+                    <field name="amount_total" sum="Total Amount"/>
+                    <field name="state"/>
+                    <field name="type" invisible="context.get('type',True)"/>
+                </tree>
+            </field>
+        </record>
+        
+			
+        <record id="action_invoice_woo_invoices" model="ir.actions.act_window">
+            <field name="name">Invoices</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar,graph</field>
+            <field eval="woo_invoice_tree_ept" name="view_id"/>
+            <field name="help" type="html">
+              <div class="oe_empty_woo_invoice">
+                  <br/><br/><br/>
+                  <p>
+                    <b>There is no any Invoice created for any of your WooCommerce Sale Orders. </b>
+                  <p>
+                  </p>
+                    If your WooCommerce Instance's Invoice Policy is set to "Before Delivery", then invoice will be created immediately after 
+                    validation of Order.If your WooCommerce Instance's Invoice Policy is set to "After Delivery", then once your shipping order completed, you can make Invoice from Delivery Order. You can't create WooCommerce Invoice manually from here. However, you can make manually invoice from WooCommerce Sale Order.
+                  </p>
+                 
+              </div>				
+            </field>
+            <field name="domain">[('type','=','out_invoice'),('woo_instance_id','!=',False)]</field>
+            <field name="context">{'default_type':'out_invoice', 'type':'out_invoice', 'journal_type': 'sale'}</field>
+            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+        </record>
+
+        <record id="woo_invoice_tree_ept1" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id"  ref="woo_invoice_tree_ept"/>
+            <field name="act_window_id" ref="action_invoice_woo_invoices"/>
+        </record>
+
+        <record id="woo_invoice_form_ept1" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.invoice_form"/>
+            <field name="act_window_id" ref="action_invoice_woo_invoices"/>
+        </record>
+
+        <record id="action_refund_woo_invoices" model="ir.actions.act_window">
+            <field name="name">Refunds</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar,graph</field>
+            <field eval="woo_invoice_tree_ept" name="view_id"/>
+            <field name="help" type="html">
+              <div class="oe_empty_woo_invoice">
+                  <br/><br/><br/>
+                  <p>
+                    <b>There is no any Refund created for any of your WooCommerce Sale Orders. </b>
+                  <p>
+                  </p>
+                  	If you Cancel Delivery Order then you can see Cancel In WooCommerce button, On click of that button system will open wizard.
+                  	In which you can configure cancel order details and refund details.
+                  	On Canceling Order in WooCommerce system will create refund.
+                  </p>
+                 
+              </div>				
+            </field>
+            <field name="domain">[('type','=','out_refund'),('woo_instance_id','!=',False)]</field>
+            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+        </record>
+
+        <record id="woo_invoice_tree_ept2" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id"  ref="woo_invoice_tree_ept"/>
+            <field name="act_window_id" ref="action_refund_woo_invoices"/>
+        </record>
+
+        <record id="woo_invoice_form_ept2" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.invoice_form"/>
+            <field name="act_window_id" ref="action_refund_woo_invoices"/>
+        </record>
+        
+        <record id="action_woo_invoice_instance_ept" model="ir.actions.act_window">
+            <field name="name">Invoices</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar,graph</field>
+            <field eval="woo_invoice_tree_ept" name="view_id"/>
+            <field name="domain">[('woo_instance_id','=',active_id)]</field>            
+            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+        </record>        
+
+        <record id="action_invoice_woo_invoices_open" model="ir.actions.act_window">
+            <field name="name">Invoices</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar,graph</field>
+            <field eval="woo_invoice_tree_ept" name="view_id"/>
+            <field name="domain">[('type','=','out_invoice'),('woo_instance_id','=',active_id),('state','=','open')]</field>
+            <field name="context">{'default_type':'out_invoice', 'type':'out_invoice', 'journal_type': 'sale'}</field>
+            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+        </record>
+        
+
+        <record id="action_invoice_woo_invoices_paid" model="ir.actions.act_window">
+            <field name="name">Invoices</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar,graph</field>
+            <field eval="woo_invoice_tree_ept" name="view_id"/>
+            <field name="domain">[('type','=','out_invoice'),('woo_instance_id','=',active_id),('state','=','paid')]</field>
+            <field name="context">{'default_type':'out_invoice', 'type':'out_invoice', 'journal_type': 'sale'}</field>
+            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+        </record>
+        
+		<record id="action_invoice_woo_invoices_refund" model="ir.actions.act_window">
+            <field name="name">Invoices</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar,graph</field>
+            <field eval="woo_invoice_tree_ept" name="view_id"/>
+            <field name="domain">[('type','=','out_refund'),('woo_instance_id','=',active_id)]</field>            
+            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+        </record>        
+                
+        <record id="woo_invoice_tree_ept3" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id"  ref="woo_invoice_tree_ept"/>
+            <field name="act_window_id" ref="action_invoice_woo_invoices_open"/>
+        </record>
+
+        <record id="woo_invoice_form_ept3" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.invoice_form"/>
+            <field name="act_window_id" ref="action_invoice_woo_invoices_open"/>
+        </record>      
+        
+        <record id="woo_invoice_tree_ept4" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id"  ref="woo_invoice_tree_ept"/>
+            <field name="act_window_id" ref="action_invoice_woo_invoices_paid"/>
+        </record>
+
+        <record id="woo_invoice_form_ept4" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.invoice_form"/>
+            <field name="act_window_id" ref="action_invoice_woo_invoices_paid"/>
+        </record>
+
+        <record id="action_invoice_woo_invoices" model="ir.actions.act_window">
+            <field name="name">Invoices</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar,graph</field>
+            <field eval="False" name="view_id"/>
+            <field name="domain">[('type','=','out_invoice'),('woo_instance_id','!=',False)]</field>
+            <field name="context">{'default_type':'out_invoice', 'type':'out_invoice', 'journal_type': 'sale'}</field>
+            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+        </record>
+
+
+      <menuitem id="menu_item_parent_woo_invoices_ept" name="Invoice Details"
+      parent="woo_commerce_ept.woo_commerce_main_menu" sequence="11"/>
+
+     <menuitem id="menu_item_woo_invoice_ept" name="Invoices"
+      parent="menu_item_parent_woo_invoices_ept" action="action_invoice_woo_invoices" sequence="5"/>
+
+     <menuitem id="menu_item_woo_refund_ept" name="Refunds"
+      parent="menu_item_parent_woo_invoices_ept" action="action_refund_woo_invoices" sequence="5"/>
+
+
+        <record id="invoice_form_ept" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+			<field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+            	<button name="action_invoice_draft" position="after">
+            		<field name="woo_instance_id" invisible="1"/>
+            		<field name="is_refund_in_woo" invisible="1"/>
+            		<field name="source_invoice_id" invisible="1"/>
+            		<button name="refund_in_woo" type="object" string="Refund In WooCommerce" attrs="{'invisible':['|','|','|',('is_refund_in_woo','!=',False),('woo_instance_id','=',False),('state','!=','paid'),('type','!=','out_refund')]}"/>
+            	</button>
+			</field>
+		</record>
+
+	</data>
+</odoo>
