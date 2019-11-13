@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="view_invoice_auto_worflow_extended_ept">
+            <field name="name">globals_channals_ept</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="sale.account_invoice_form"/>
+            <field name="arch" type="xml">
+            	
+                	<field name="team_id" position="after">
+                		<field name="global_channel_id" />
+                	</field>
+             </field>
+    	</record>
+</odoo>
